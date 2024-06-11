@@ -6,8 +6,11 @@ exports.authMiddleware = (req, res, next) => {
 
   if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
 
+  const regex = /^Bearer\s+(\S+)$/;
+  const extracted_token = token.match(regex);
+
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(extracted_token[1], process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
